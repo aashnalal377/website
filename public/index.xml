@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Aashna Lal</title>
+    <link>/</link>
+    <description>Recent content on Aashna Lal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 11 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Matching Strategies in Python</title>
+      <link>/blog/matching-strategies-in-python/</link>
+      <pubDate>Wed, 11 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/matching-strategies-in-python/</guid>
+      <description>Matching and Filtering Strings
+RegEx (Regular Expression) can be used to search for patterns within a string. This is useful in a variety of contexts, such as matching IP addresses, websites, and nucleotide bases as just a few examples.
+In the following string (from Homework 11), I am going to match all of the website addresses.
+import re string6=&amp;quot;&amp;lt;http://www.classmates.com/go/e/200988231/CC123101BT/CM00&amp;gt; &amp;lt;http://graphics.classmates.com/graphics/spacer.gif&amp;gt; &amp;lt;http://graphics.classmates.com/graphics/sp \ You have received this email because the requester specified you as their Manager.</description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/2019/12/11/resume/</link>
+      <pubDate>Wed, 11 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/11/resume/</guid>
+      <description>My name is Aashna Lal and I am a Plan II and Biology major in the Polymathic Scholars program. My academic interests include public health, effective non-profits and philanthropy, health policy, and social determinants of health.
+aashnalal@utexas.edu
+###Education #####The University of Texas at Austin Plan II Honors, B.A. Biology Honors, B.S.A May 2021
+###Leadership Experience and Activities
+####Natural Sciences Council (Outreach Coordinator) Plan and execute fundraising efforts, raising over $9,000 for council initiatives Fuel collaborations and strengthen relationships with organizations at UT and in the broader Austin community *Collaborate as an executive board to advocate for the CNS student body and improve the student experience</description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/2019/12/11/resume/</link>
+      <pubDate>Wed, 11 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/11/resume/</guid>
+      <description>My name is Aashna Lal and I am a Plan II and Biology major in the Polymathic Scholars program. My academic interests include public health, effective non-profits and philanthropy, health policy, and social determinants of health.
+aashnalal@utexas.edu
+###Education #####The University of Texas at Austin Plan II Honors, B.A. Biology Honors, B.S.A May 2021
+###Leadership Experience and Activities
+####Natural Sciences Council (Outreach Coordinator) Plan and execute fundraising efforts, raising over $9,000 for council initiatives Fuel collaborations and strengthen relationships with organizations at UT and in the broader Austin community *Collaborate as an executive board to advocate for the CNS student body and improve the student experience</description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/</link>
+      <pubDate>Wed, 11 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>My name is Aashna Lal and I am a Plan II and Biology major in the Polymathic Scholars program. My academic interests include public health, effective non-profits and philanthropy, health policy, and social determinants of health.
+aashnalal@utexas.edu
+The University of Texas at Austin
+Plan II Honors, B.A.
+Biology Honors, B.S.A
+May 2021
+Leadership Experience and Activities
+Natural Sciences Council (Outreach Coordinator)
+Plan and execute fundraising efforts, raising over $9,000 for council initiatives</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>Projects Here are some projects I have been working on:
+  Project 1
+  Project 2
+  </description>
+    </item>
+    
+    <item>
+      <title>EDA Project 1</title>
+      <link>/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project1/</guid>
+      <description>Homelessness and Mental Health Care Accessibility in California and New York
+The datasets I chose to explore with this project address homelessness statistics and mental health accessibility statistics in various counties of California and New York. The homelessness dataset includes the total number of homeless individuals in the county along with a breakdown of various subgroups of homeless individuals within that total number. The mental health dataset provides statistics on the number of mental health providers in the county, along with the ratio of residents to mental health providers.</description>
+    </item>
+    
+    <item>
+      <title>EDA Project 2</title>
+      <link>/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project2/</guid>
+      <description>EDA Project 2: 2016 Election Results by State
+The dataset I chose explores the 2016 presidential election results by state, comparing various factors across each state. The binary variable, TrumpWin, expresses 1 if President Trump won in that state is 0 if he did not. State and Abr specify which state we are looking at and Income shows the per capita income in the state. HS, BA, and Adv shows the percent of high school grads, college grads, and advanced degrees respectively.</description>
+    </item>
+    
+  </channel>
+</rss>

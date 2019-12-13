@@ -1,0 +1,56 @@
+---
+title: Matching Strategies in Python
+author: Aashna Lal
+date: '2019-12-11'
+slug: matching-strategies-in-python
+categories: []
+tags: []
+description: ''
+---
+**Matching and Filtering Strings**
+
+RegEx (Regular Expression) can be used to search for patterns within a string. This is useful in a variety of contexts, such as matching IP addresses, websites, and nucleotide bases as just a few examples. 
+
+In the following string (from Homework 11), I am going to match all of the website addresses.
+```{python}
+import re
+string6="<http://www.classmates.com/go/e/200988231/CC123101BT/CM00>  <http://graphics.classmates.com/graphics/spacer.gif>  <http://graphics.classmates.com/graphics/sp \
+You have received this email because the requester specified you as their Manager. Please click http://itcapps.corp.enron.com/srrs/auth/emailLink.asp?ID=000000000053239&Page=Approval to review and act upon this request.     Request ID          : 000000000053239 Request Create Date\
+ronOnline.   The following User ID and Password will give you access to live prices on the web-site http://www.enrononline.com.  User ID: ADM40601 Password: WELCOME!   (note these are case sensitive)    Please keep your User I\
+<http://www.classmates.com/go/e/200988231/CC122401BC/CM00>  <http://graphics.classmates.com/graphics/spacer.gif>  <http://graphics.classmates.com/graphics/sp\
+http://www.btinternet.com/~pir8/arnie/\
+n, just click on the following hyperlink and complete the order form by Tuesday February 12, 2002.  http://zzz1.net/rd/rd.asp?ZXU=562&ZXD=1471085&UID=1471085  If you cannot link directly to the web site, simply cut and paste the address listed above into yo\
+been successful getting in the group. To access the group should go to your web browser and type in http://www.egroups.com  The screen should show that you are a member of smu-betas group. When you replied to the original \
+mber and password. For more details on how to log-on to eHRonline, see step-by-step instructions at http://isc.enron.com/site/doclibrary/user/ 2. Navigate to the pay advice using the following navigation menus: ? Pay Information ? Paycheck I\
+In addition to World Markets Energy information  <http://esource.enron.com/worldmarket.asp> and Country Analysis and Forecasting, <http://esource.enron.com/worldmarket_CountryAnalysis.asp>  \
+<http://ad.doubleclick.net/clk;3549492;6600300;c?http://www.sportingbetusa.com/english/casino/casinonew-fr.asp?isLogged=notlogged> A WEEKEND PAIR-A-DICE <http://ad.doubleclick.net/clk;3549492;6600300;c?http://www.sportingbetusa.c \
+Mr. Skilling:  Your P number is P00500599.  For your convenience, you can also go to http://isc.enron.com/site/ under"
+
+re.findall(r'(http://?[^\s]+)',string6)
+```
+
+In a new string of nucleotide bases, we can count the number of each of the four bases that appear- the result shows that the A base is the most common and G is the least common. We can also look for a specific sequence. For example, we can find all the times that TTC appears. RegEx can be helpful in this string when searching for a specific binding sequence for a protein or simply looking for patterns in the sequence.
+```{python}
+string7="ATGGCAATAACCCCCCGTTTCTACTTCTAGAGGAGAAAAGTATTGACATGAGCGCTCCCGGCACAAGGGCCAAAGAAGTCTCCAATTTCTTATTTCCGAATGACATGCGTCTCCTTGCGGGTAAATCACCGACCGCAATTCATAGAAGCCTGGGGGAACAGATAGGTCTAATTAGCTTAAGAGAGTAAATCCTGGGATCATTCAGTAGTAACCATAAACTTACGCTGGGGCTTCTTCGGCGGATTTTTACAGTTACCAACCAGGAGATTTGAAGTAAATCAGTTGAGGATTTAGCCGCGCTATCCGGTAATCTCCAAATTAAAACATACCGTTCCATGAAGGCTAGAATTACTTACCGGCCTTTTCCATGCCTGCGCTATACCCCCCCACTCTCCCGCTTATCCGTCCGAGCGGAGGCAGTGCGATCCTCCGTTAAGATATTCTTACGTGTGACGTAGCTATGTATTTTGCAGAGCTGGCGAACGCGTTGAACACTTCACAGATGGTAGGGATTCGGGTAAAGGGCGTATAATTGGGGACTAACATAGGCGTAGACTACGATGGCGCCAACTCAATCGCAGCTCGAGCGCCCTGAATAACGTACTCATCTCAACTCATTCTCGGCAATCTACCGAGCGACTCGATTATCAACGGCTGTCTAGCAGTTCTAATCTTTTGCCAGCATCGTAATAGCCTCCAAGAGATTGATGATAGCTATCGGCACAGAACTGAGACGGCGCCGATGGATAGCGGACTTTCGGTCAACCACAATTCCCCACGGGACAGGTCCTGCGGTGCGCATCACTCTGAATGTACAAGCAA"
+
+counts = {}
+for c in string7:
+    if c in counts:
+        counts[c]+=1
+    else:
+        counts[c]=1
+        
+for c in counts:
+ print(c, "appears", counts[c],"times")
+ 
+re.findall(r'TTC',string7)
+```
+
+There are a variety of other ways that RegEx can be used. Re.split can be used to split a string into a list of words, re.match can return only the first match in the string, and re.sub can substitute matches. In the example below, I substitute all T bases in the string with U (uridine).
+
+```{python}
+string8="ATGGCAATAACCCCCCGTTTCTACTTCTAGAGGAGAAAAGTATTGACATGAGCGCTCCCGGCACAAGGGCCAAAGAAGTCTCCAATTTCTTATTTCCGAATGACATGCGTCTCCTTGCGGGTAAATCACCGACCGCAATTCATAA"
+
+re.sub(r"T","U",string8)
+```
+

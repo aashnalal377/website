@@ -1,0 +1,161 @@
+---
+title: "EDA Project 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Homelessness and Mental Health Care Accessibility in California and New York
+###Aashna Lal agl696
+
+The datasets I chose to explore with this project address homelessness statistics and mental health accessibility statistics in various counties of California and New York. The homelessness dataset includes the total number of homeless individuals in the county along with a breakdown of various subgroups of homeless individuals within that total number. The mental health dataset provides statistics on the number of mental health providers in the county, along with the ratio of residents to mental health providers. 
+
+I'm interested in these two datasets because homeless populations have high needs for mental health care, and this is a cause I've learned a lot about in my past two years here in Austin. I've learned a lot about the stigma around mental health care and the barriers to accessibility for homeless populations. Certain subgroups especially, such as homeless veterans or homeless youth, are at even higher risk for mental health issues, so the prevelance of mental health providers is vital to give them proper care. Austin specifically has some of the lowest numbers of youth mental health providers, meaning it's incredibly difficult for street-dependent youth to access affordable and reliable mental health care. Mental health care is already often inaccessible to the general public, so it is even more inaccessible to homeless populations. Although this data does not contain certain details such as the cost of mental health providers in an area or insurance policies of providers, looking at just the sheer number of providers is useful in understanding how accessible mental health care would be to homeless populations in different counties. I am interested to see whether there are more mental health providers in areas with more homelessness, or whether mental healh providers are concentrated in wealthier areas that would have less homeless individuals.
+
+###Importing the datasets
+```{r}
+r = getOption("repos")
+r["CRAN"] = "http://cran.us.r-project.org"
+options(repos = r)
+install.packages("readr")
+library(readr)
+install.packages("dplyr")
+library(dplyr)
+install.packages("tidyr")
+library(tidyr)
+install.packages("tidyverse")
+library(tidyverse)
+install.packages("ggplot2")
+library(ggplot2)
+install.packages("cluster")
+library(cluster)
+
+homelessness <- read_csv("~/Downloads/homelessness.csv", 
+    col_types = cols(`Chronically Homeless` = col_number(), 
+        `Homeless Unaccompanied Youth (Under 25)` = col_number(), 
+        `Homeless Veterans` = col_number(), 
+        `Sheltered Homeless` = col_number(), 
+        `Total Homeless` = col_number(), 
+        `Unsheltered Homeless` = col_number()))
+homeless <- homelessness
+
+mental_health_data <- read_csv("~/Downloads/mental health data.csv", 
+    col_types = cols(`# Mental Health Providers` = col_number(), 
+        `MHP Ratio` = col_number(), X5 = col_skip()))
+mhp <- mental_health_data
+```
+
+###Renaming Variables
+```{R}
+homeless <- homeless %>% rename("total_homeless"="Total Homeless") %>% 
+  rename("chronically"="Chronically Homeless") %>% rename("unsheltered"="Unsheltered Homeless") %>%
+  rename("sheltered"="Sheltered Homeless") %>% rename("veterans"="Homeless Veterans") %>%
+  rename("youth_under25"="Homeless Unaccompanied Youth (Under 25)")
+
+mhp <- mhp %>% rename("number_mhp"="# Mental Health Providers") %>% rename("ratio_mhp"="MHP Ratio")
+```
+
+#Untidying and Re-Tidying Datasets
+```{R}
+#To untidy the homeless dataset, I turned the State column into rows and put the county name as the value for each row. To retidy them, I turned the California and New York columns back into one State column, and I paired them back with the counties in those states.
+homeless_untidy <- homeless %>% pivot_wider(names_from = "State", values_from = "County")
+homeless_tidy <- homeless_untidy %>% 
+  pivot_longer(7:8, names_to="State",values_to = "County") %>% na.omit()
+homeless <- homeless_tidy[c(7,8,1,2,3,4,5,6)]
+
+#To untidy the mental health providers dataset, I turned each County into its own column that contains the number of MHP for that county. To retidy them, I took all of the county name columns and put them back into one column and matched the counties back with the number of mental health providers. I also re-ordered the columns so State and County would be the first two columns.
+mhp_untidy <- mhp %>% pivot_wider(names_from = "County", values_from = "number_mhp")
+mhp_tidy <- mhp_untidy %>% 
+  pivot_longer(3:55, names_to = "County", values_to = "number_mhp") %>% na.omit()
+mhp <- mhp_tidy[c(1,3,4,2)]
+
+```
+
+###Joining the Datasets
+I chose to use the inner join function because there are a few counties present in the homeless dataset that aren't in the mhp dataset, and I only want to view the counties that are present in both datasets. There were 3 rows (counties) that are in homeless and not in mhp, so 3 rows were dropped.
+
+```{R}
+mhp_homeless <- inner_join(homeless,mhp)
+nrow(homeless) - nrow(mhp)
+```
+
+###Summary Statistics
+```{R}
+#summary statistics (min, 1st quartile, median, mean, 3rd quartile, and max) for each numeric variable
+mhp_homeless %>% summary() 
+
+#mean and standard deviation of total number of homeless individuals grouped by state
+mhp_homeless %>% group_by(State) %>% summarize(mean=mean(total_homeless),sd=sd(total_homeless))
+
+#mean and standard deviation of total number of mental health providers grouped by state
+mhp_homeless %>% group_by(State) %>% summarize(mean=mean(number_mhp),sd=sd(number_mhp))
+
+#new variable of mental health providers to homeless individuals ratio
+mhp_homeless %>% mutate(mhp_homeless_ratio=number_mhp/total_homeless) %>% 
+  select(State,County,total_homeless,number_mhp,mhp_homeless_ratio) %>%
+  arrange(desc(mhp_homeless_ratio))
+
+#counties that have more mental health providers than homeless individuals
+mhp_homeless %>% mutate(mhp_homeless_ratio=number_mhp/total_homeless) %>% select(State,County,total_homeless,number_mhp,mhp_homeless_ratio) %>% filter(mhp_homeless_ratio>=1.0)
+
+#the proportion of the total homeless population made up by veterans and youth under 25
+mhp_homeless %>% select(State,County,total_homeless,veterans,youth_under25) %>%
+ mutate(vet_youth_number=veterans+youth_under25) %>% mutate(vet_youth_number/total_homeless)
+
+#which counties have the highest proportion of veteran and youth homelessness 
+mhp_homeless %>% select(State,County,total_homeless,veterans,youth_under25) %>%
+ mutate(vet_youth_number=veterans+youth_under25) %>% mutate(prop=vet_youth_number/total_homeless) %>% arrange(desc(prop))
+
+#which state has the highest average proportion of veteran and youth homelessness
+mhp_homeless %>% select(State,County,total_homeless,veterans,youth_under25) %>%
+ mutate(vet_youth_number=veterans+youth_under25) %>% mutate(prop=vet_youth_number/total_homeless) %>%
+  group_by(State) %>% summarize(mean=mean(prop)) %>% arrange(desc(mean))
+
+#counties that have less than 100 mental health providers
+mhp_homeless %>% select(State,County,total_homeless,number_mhp,ratio_mhp) %>% filter(number_mhp<100) %>% arrange(desc(number_mhp))
+
+#correlation between total homelessness and number of mental health providers
+mhp_homeless %>% summarize(cor(total_homeless,number_mhp))
+
+#correlation between all numeric variables
+mhp_homeless %>% select_if(is.numeric) %>% cor
+```
+
+
+Some key takeaways from exploring the dataset: Because the summary statistics are summarizing hard numbers as opposed to ratios/proportions, they aren't very telling in certain cases. For example, a minimum of 29 total homeless individuals versus a maximum of 75,323 doesn't give me much information alone- if I had data on the total populations of these counties, the values would be more helpful. When grouped by state, we can see that the mean number of homeless people per county is very similar between the two states, but California has over 2,000 more mental health providers on average. When looking at the mental health provider to homeless individual ratio, the smaller number means the larger the gap between number of mental health providers and number of homeless individuals. There are 33 counties that have more mental health providers than homeless individuals, which could reflect the socioeconomic status or homelessness laws of the counties. For example, these may be wealthier counties/suburbs that have stricter homelessness laws, causing there to be a concentration of mental health providers and very few homeless individuals. California has a slightly higher proportion than New York of youth and veteran homeless individuals. There are only six counties that have less than 100 mental health providers, which could reflect size or socioeconomic status, and the majority of those counties are in New York. These counties also have relatively high ratios of mental health providers to individuals, indicating that there is a gap in mental health care in these counties. Finally, the correlation between total number of homeless individuals and total number of mental health providers in a county is about 0.723, which is somewhat strong. The correlation values between number of mental health providers and veterans in a county is the highest.
+
+###Visualizing the Data
+```{r}
+#Dataset that only contains the top 10 counties with highest total homeless individuals
+mhp_homeless_top <- mhp_homeless %>% top_n(10,total_homeless) %>% arrange(desc(total_homeless))
+
+#Barplot to visualize that data of total number of homeless individuals in the top 10 counties, colored by state 
+mhp_homeless_top %>% ggplot() +
+  geom_bar(aes(x=County,y=total_homeless, fill=State),stat="summary",fun.y="mean") +
+  theme(axis.text.x=element_text(angle=45,hjust=1)) + ylab("Number Homeless Individuals") +
+  ggtitle("Top 10 Counties with Highest Number of Homeless Individuals")
+  
+
+#Point graph to map the total number of mental health providers versus the total number of homeless individuals colored by state with a line of best fit for each state
+mhp_homeless %>% ggplot(aes(x=number_mhp,y=total_homeless,color=State)) + geom_point(aes(x=number_mhp,y=total_homeless,color=State)) + scale_x_continuous(lim=c(0,8000)) + scale_y_continuous(lim=c(0,7500)) + 
+  geom_smooth(method = 'lm', se=FALSE) + xlab("Number of Mental Health Providers") +
+  ylab("Number of Homeless Individuals") + ggtitle("Number of Mental Health Providers vs Number of Homeless Individuals")
+
+```
+
+The first graph shows that 80% of the counties with the highest number of homeless individuals are in California, although the county with the highest number (which is significantly higher than the other counties) is in New York. The second plot visualized the correlation between number of mental health providers and number of homeless individuals, separated by state. The correlation in California is slightly higher than that of New York, which makes sense with the previous data that showed the average number of mental health providers is about 2,000 people higher in California than in New York. I changed the scale to focus on the area that most counties are concentrated, and this cut out a few outliers including LA county and New York County. Additionally, for the New York correlation line, it seems like more New York counties appear below the line so they would likely have a lower correlation if the significantly larger counties were removed. 
+
+###Clustering and PCA
+```{R}
+pam1<-mhp_homeless%>%pam(k=3)
+pam1
+
+pamclust<-mhp_homeless %>% mutate(cluster=as.factor(pam1$clustering))
+
+pamclust%>%group_by(cluster)%>%summarize_if(is.numeric,mean,na.rm=T)
+
+pamclust %>% ggplot(aes(total_homeless,ratio_mhp,color=cluster))+geom_point()
+```
+
+As shown by the cluster summaries, cluster 1 has the lowest homelessness numbers and lowest number of mental health providers. Cluster 2 is in the middle for total homelessness, and cluster 3 is the highest. Cluster 2, however, has a higher average number of mental health providers and cluster 3 has the lowest ratio of mental health providers to individuals despite having the highest number of homeless individuals. 

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Aashna Lal" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>EDA Project 2</title>
+    <meta name="generator" content="Hugo 0.60.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project2/">EDA Project 2</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p><strong>EDA Project 2: 2016 Election Results by State</strong></p>
+<p>The dataset I chose explores the 2016 presidential election results by state, comparing various factors across each state. The binary variable, TrumpWin, expresses 1 if President Trump won in that state is 0 if he did not. State and Abr specify which state we are looking at and Income shows the per capita income in the state. HS, BA, and Adv shows the percent of high school grads, college grads, and advanced degrees respectively. The last variable, Dem.Rep, shows Democratic lean minus Republican lean in the state, so a negative number indicates that it is a more Republican leaning state and a positive number indicates the opposite.</p>
+<pre class="r"><code>Election16 &lt;- read_csv(&quot;~/Downloads/Election16.csv&quot;)</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X1&#39; [1]</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   X1 = col_double(),
+##   State = col_character(),
+##   Abr = col_character(),
+##   Income = col_double(),
+##   HS = col_double(),
+##   BA = col_double(),
+##   Adv = col_double(),
+##   Dem.Rep = col_double(),
+##   TrumpWin = col_double()
+## )</code></pre>
+<pre class="r"><code>Election16 &lt;- Election16 %&gt;% select(-X1)</code></pre>
+<p><em>MANOVA testing</em></p>
+<p>The null hypothesis states that for each response variable, the means of TrumpWin across the states are equal. The alternate hypothesis states that for at least one response variable, at least one of the means differs.</p>
+<pre class="r"><code>#Manova
+man&lt;-manova(cbind(Income,HS,BA,Adv)~TrumpWin, data=Election16)
+summary(man)</code></pre>
+<pre><code>##           Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## TrumpWin   1 0.56647     14.7      4     45 9.356e-08 ***
+## Residuals 48                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#Univariate ANOVA
+summary.aov(man)</code></pre>
+<pre><code>##  Response Income :
+##             Df     Sum Sq    Mean Sq F value   Pr(&gt;F)    
+## TrumpWin     1 1460257306 1460257306  28.442 2.57e-06 ***
+## Residuals   48 2464352192   51340671                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response HS :
+##             Df Sum Sq Mean Sq F value Pr(&gt;F)
+## TrumpWin     1   9.58  9.5765  1.0033 0.3215
+## Residuals   48 458.15  9.5449               
+## 
+##  Response BA :
+##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## TrumpWin     1 590.24  590.24  47.012 1.22e-08 ***
+## Residuals   48 602.65   12.56                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response Adv :
+##             Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## TrumpWin     1 178.49 178.487  56.037 1.329e-09 ***
+## Residuals   48 152.89   3.185                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#post-hoc t-tests
+pairwise.t.test(Election16$Income,Election16$TrumpWin,p.adj=&quot;bonferroni&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Election16$Income and Election16$TrumpWin 
+## 
+##   0      
+## 1 2.6e-06
+## 
+## P value adjustment method: bonferroni</code></pre>
+<pre class="r"><code>pairwise.t.test(Election16$BA,Election16$TrumpWin,p.adj=&quot;bonferroni&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Election16$BA and Election16$TrumpWin 
+## 
+##   0      
+## 1 1.2e-08
+## 
+## P value adjustment method: bonferroni</code></pre>
+<pre class="r"><code>pairwise.t.test(Election16$Adv,Election16$TrumpWin,p.adj=&quot;bonferroni&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Election16$Adv and Election16$TrumpWin 
+## 
+##   0      
+## 1 1.3e-09
+## 
+## P value adjustment method: bonferroni</code></pre>
+<pre class="r"><code>0.05/5</code></pre>
+<pre><code>## [1] 0.01</code></pre>
+<p>Briefly discuss assumptions and whether or not they are likely to have been met (2).</p>
+<p>5 tests were performed: 1 MANOVA, 1 univariate ANOVA, and 3 t-tests. The t-tests were adjusted using the Bonferroni method (the new p-value would be 0.01 given that 5 tests were performed). The results of the MANOVA show that there is a significant difference, and the results of the univariate ANOVA shows that the Income, percent college grads, and percent of advanced degrees variables significantly differ. The results of the post-hoc t-tests indicate that across each of these variables, there is a significant difference in whether or not Trump won in that state. The random sample and independent observations assumptions are not super applicable to this because the data on income and education levels probably came from state information on residents. Equal variance and linear relationships was likely not met in terms of Income.</p>
+<p><em>Randomization Test</em></p>
+<p>This randomization test is testing whether income differs in states where Trump won and did not win. The null hypothesis is that there is no difference in income in states where Trump won versus states where he did not. The alternate hypothesis is that there is a difference in income in states where Trump won versus states where he did not. This test will test the mean difference, and then randomize income and re-test the mean difference.</p>
+<pre class="r"><code>Election16%&gt;%group_by(TrumpWin)%&gt;%summarize(m=mean(Income))%&gt;%summarize(diff(m))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `diff(m)`
+##       &lt;dbl&gt;
+## 1   -11031.</code></pre>
+<pre class="r"><code>rand&lt;-vector()
+for(i in 1:5000){
+new&lt;-data.frame(Income=sample(Election16$Income),TrumpWin=Election16$TrumpWin)
+rand[i]&lt;-mean(new[new$TrumpWin==&quot;1&quot;,]$Income)-
+  mean(new[new$TrumpWin==&quot;0&quot;,]$Income)
+}
+
+mean(rand&lt; -11031.23)*2 </code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>{hist(rand,main=&quot;&quot;,ylab=&quot;&quot;); abline(v = -13.7,col=&quot;red&quot;)}</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+The original mean difference between income is 11031.23, which is a high value. The p-value of 0 shows that there is no probability of observing a mean difference as extreme as this one.</p>
+<p><em>Linear Regression</em></p>
+<pre class="r"><code>#linear regression model predicting Income from percent of high school grads and college grads
+Election16$Income_c &lt;- Election16$Income - mean(Election16$Income)
+Election16$HS_c &lt;- Election16$HS - mean(Election16$HS)
+Election16$BA_c &lt;- Election16$BA - mean(Election16$BA)
+fit&lt;-lm(Income_c~HS_c*BA_c,data=Election16)
+summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Income_c ~ HS_c * BA_c, data = Election16)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+##  -9584  -3392   -853   2774  17672 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   378.44     852.92   0.444    0.659    
+## HS_c          334.44     283.52   1.180    0.244    
+## BA_c         1342.32     172.31   7.790 6.04e-10 ***
+## HS_c:BA_c     -54.82      60.12  -0.912    0.367    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 5269 on 46 degrees of freedom
+## Multiple R-squared:  0.6746, Adjusted R-squared:  0.6534 
+## F-statistic: 31.79 on 3 and 46 DF,  p-value: 2.779e-11</code></pre>
+<pre class="r"><code>#plot of the regression
+Election16 %&gt;% ggplot(aes(x=HS_c+BA_c,y=Income_c)) + geom_point() + geom_smooth(method=&#39;lm&#39;,se=F)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>#testing assumptions
+resid&lt;-fit$residuals
+fittedvals&lt;-fit$fitted.values
+ggplot()+geom_point(aes(fittedvals,resid))+geom_hline(yintercept=0, color=&#39;red&#39;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<pre class="r"><code>ks.test(resid, &quot;pnorm&quot;, mean=0, sd(resid)) </code></pre>
+<pre><code>## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  resid
+## D = 0.11089, p-value = 0.5336
+## alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>#regression with robust standard errors
+install.packages(&quot;lmtest&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/7b/4zh7n0hj4fb6k0zlvdf69v0r0000gn/T//RtmptVY80b/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;sandwich&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/7b/4zh7n0hj4fb6k0zlvdf69v0r0000gn/T//RtmptVY80b/downloaded_packages</code></pre>
+<pre class="r"><code>library(sandwich)
+library(lmtest)</code></pre>
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>coeftest(fit, vcov = vcovHC(fit))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##             Estimate Std. Error t value  Pr(&gt;|t|)    
+## (Intercept)  378.442    892.675  0.4239    0.6736    
+## HS_c         334.438    356.310  0.9386    0.3528    
+## BA_c        1342.323    185.291  7.2444 3.922e-09 ***
+## HS_c:BA_c    -54.816     57.752 -0.9492    0.3475    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#R^2 value (proportion of variation)
+summary(fit)$r.sq</code></pre>
+<pre><code>## [1] 0.6746254</code></pre>
+<p>When testing the effect of the percent of high school grads and percent of college grads on the per capita income of the state, both high school and college grad percentages had a positive increase on income. Per one percent increase of high school grads while controlling for college grads, income increases by 334.44 dollars and per one percent increase of college grads while controlling for high school grads, income increases by 1,342.32 dollars. The plot shows that the data looks linear and homoskedastic, and the ks.test shows that the distribution is normal. For the test with robust standard error and the test without, only percent of college grads (BA_c) had a significant effect on Income, so there was no change between the two tests. The model explains 67.5% of variation in income.</p>
+<p><em>Bootrstrapped Standard Errors</em></p>
+<p>Rerun same regression model (with interaction), but this time compute bootstrapped standard errors. Discuss any changes you observe in SEs and p-values using these SEs compared to the original SEs and the robust SEs)</p>
+<pre class="r"><code>fit&lt;-lm(Income_c~HS_c*BA_c,data=Election16)
+resid&lt;-fit$residuals
+fittedvals&lt;-fit$fitted.values
+
+ resid_resamp&lt;-replicate(5000,{
+ new_resid&lt;-sample(resid,replace=TRUE) 
+ Election16$new_Income&lt;-fittedvals+new_resid 
+ fit&lt;-lm(new_Income~HS_c*BA_c,data=Election16) 
+ coef(fit) 
+})
+ 
+resid_resamp%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept)    HS_c     BA_c HS_c:BA_c
+## 1    820.9849 269.532 166.0312  58.12551</code></pre>
+<p>The bootstrapped standard errors were all lower than the original model’s standard errors, except for the interaction. This was the same when comparing the bootstrapped standard errors with the robust standard errors.</p>
+<p><em>Logistic Regression</em></p>
+<p>This logistic regression is testing the effect of Income and percent of college grads on whether Trump won or did not win in that state.</p>
+<pre class="r"><code>#logistic regression
+log_fit&lt;-glm(TrumpWin~Income+BA,data=Election16)
+coeftest(log_fit)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##                Estimate  Std. Error z value  Pr(&gt;|z|)    
+## (Intercept)  2.7242e+00  3.2510e-01  8.3796 &lt; 2.2e-16 ***
+## Income      -6.5788e-06  9.6971e-06 -0.6784 0.4974978    
+## BA          -6.0902e-02  1.7589e-02 -3.4625 0.0005351 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>exp(coeftest(log_fit))</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##             Estimate Std. Error   z value Pr(&gt;|z|)
+## (Intercept) 15.24415    1.38417 4357.3310    1.000
+## Income       0.99999    1.00001    0.5074    1.645
+## BA           0.94092    1.01774    0.0314    1.001</code></pre>
+<pre class="r"><code>#confusion matrix
+prob&lt;-predict(log_fit,type=&quot;response&quot;)
+table(predict=as.numeric(prob&gt;0.5),truth=Election16$TrumpWin)%&gt;%addmargins</code></pre>
+<pre><code>##        truth
+## predict  0  1 Sum
+##     0   16  2  18
+##     1    4 28  32
+##     Sum 20 30  50</code></pre>
+<pre class="r"><code>#Accuracy
+(16+28)/50</code></pre>
+<pre><code>## [1] 0.88</code></pre>
+<pre class="r"><code>#Sensitivity (TPR)
+28/30</code></pre>
+<pre><code>## [1] 0.9333333</code></pre>
+<pre class="r"><code>#Specificity (TPR)
+16/20</code></pre>
+<pre><code>## [1] 0.8</code></pre>
+<pre class="r"><code>#Precision (PPV)
+28/32</code></pre>
+<pre><code>## [1] 0.875</code></pre>
+<pre class="r"><code>#plot of density of log-odds by TrumpWin variable
+odds&lt;-function(prob)prob/(1-prob)
+logit&lt;-function(prob)log(odds(prob))
+ggplot()+stat_function(aes(x=seq(0.01,0.99,0.01)),fun=logit,geom=&quot;line&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>#ROC Curve and AUC
+library(plotROC) 
+ROCcurve&lt;-ggplot(Election16)+geom_roc(aes(d=TrumpWin,m=prob), n.cuts=0) 
+ROCcurve</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<pre class="r"><code>calc_auc(ROCcurve)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.9116667</code></pre>
+<pre class="r"><code>#10 fold CV
+fit_cv&lt;-glm(TrumpWin~Income+BA,data=Election16,family=&quot;binomial&quot;)
+prob_cv&lt;-predict(fit_cv,type=&quot;response&quot;)
+
+class_diag&lt;-function(probs,truth){
+ tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+ acc=sum(diag(tab))/sum(tab)
+ sens=tab[2,2]/colSums(tab)[2]
+ spec=tab[1,1]/colSums(tab)[1]
+ ppv=tab[2,2]/rowSums(tab)[2]
+ if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+
+ ord&lt;-order(probs, decreasing=TRUE)
+ probs &lt;- probs[ord]; truth &lt;- truth[ord]
+ TPR=cumsum(truth)/max(1,sum(truth))
+ FPR=cumsum(!truth)/max(1,sum(!truth))
+ dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+ TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+ n &lt;- length(TPR)
+ auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+ data.frame(acc,sens,spec,ppv,auc)
+} 
+
+set.seed(1234)
+k=5
+data&lt;-Election16[sample(nrow(Election16)),]
+folds&lt;-cut(seq(1:nrow(Election16)),breaks=k,labels=F) 
+diags&lt;-NULL
+for(i in 1:k){
+ train&lt;-data[folds!=i,]
+ test&lt;-data[folds==i,]
+ truth&lt;-test$TrumpWin
+ fit_cv&lt;-glm(TrumpWin~Income+BA,data=train,family=&quot;binomial&quot;)
+ probs&lt;-predict(fit_cv,newdata=test,type=&quot;response&quot;)
+ 
+ diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+apply(diags,2,mean)</code></pre>
+<pre><code>##       acc      sens      spec       ppv       auc 
+## 0.8600000 0.9028571 0.8361905 0.8466667 0.8792381</code></pre>
+<p>Only the effect of percent of college grads is significant on whether or not Trump won. A unit increase in Income multiplies the odds of Trump winning by 0.99999, and a unit increase in the percentage of college grads multiplies the odds of Trump winning by 0.94092. The accuracy of the model is 0.88, the sensitivity is 0.933, the specificity is 0.8, and the precision is 0.875. The fact that the sensitivity is high means that the model is good at predicting that Trump won in states that he did win in, but the lower specificity indicates that the model was not as strong at predicting his losses (the model predicted more states to win than he actually did win). The precision of 0.875 indicates that the model classified 87.5% of the states that voted for Trump as states that voted for Trump. The high AUC of about 0.912 and ROC curve indicate that the model is a strong predictor of whether Trump won or did not win in a state. With the 10-fold CV, the accuracy was 0.86, the sensitivity was 0.871, and the specificity was 0.82.</p>
+<p><em>LASSO Regression</em></p>
+<pre class="r"><code>y&lt;-as.matrix(Election16$TrumpWin)
+x&lt;-Election16 %&gt;% select(-TrumpWin,-State,-Abr) %&gt;% mutate_all(scale) %&gt;% as.matrix
+
+cv&lt;-cv.glmnet(x,y)
+lasso&lt;-glmnet(x,y,lambda=cv$lambda.1se)
+coef(lasso)</code></pre>
+<pre><code>## 9 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                        s0
+## (Intercept)  6.000000e-01
+## Income      -2.421626e-02
+## HS           .           
+## BA          -9.404678e-02
+## Adv         -6.369230e-02
+## Dem.Rep     -1.361199e-01
+## Income_c    -4.273877e-05
+## HS_c         .           
+## BA_c         .</code></pre>
+<pre class="r"><code>set.seed(1234)
+k=5 
+data1&lt;-Election16[sample(nrow(Election16)),] #randomly order rows
+folds&lt;-cut(seq(1:nrow(Election16)),breaks=k,labels=F) #create folds
+diags&lt;-NULL
+for(i in 1:k){
+
+ train&lt;-data1[folds!=i,]
+ test&lt;-data1[folds==i,]
+ truth&lt;-test$TrumpWin
+ 
+ fit&lt;-glm(TrumpWin~BA+Income+Adv+Dem.Rep,data=train,family=&quot;binomial&quot;)
+ probs&lt;-predict(fit,newdata = test,type=&quot;response&quot;)
+ 
+ diags&lt;-rbind(diags,class_diag(probs,truth))
+}</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+<pre class="r"><code>diags%&gt;%summarize_all(mean)</code></pre>
+<pre><code>##    acc      sens      spec  ppv       auc
+## 1 0.86 0.8742857 0.8647619 0.87 0.9093333</code></pre>
+<p>The output of the LASSO regression indicates that Income, percent of college grads, percent of advanced degrees, and democratic or republican lean are the most important predictors of Trump winning in a state. With the LASSO regression 10-fold CV, the accuracy (along with all of the other measures) was higher than that of the logistic regression.</p>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Aashna Lal" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>EDA Project 1</title>
+    <meta name="generator" content="Hugo 0.60.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1/">EDA Project 1</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p><strong>Homelessness and Mental Health Care Accessibility in California and New York</strong></p>
+<p>The datasets I chose to explore with this project address homelessness statistics and mental health accessibility statistics in various counties of California and New York. The homelessness dataset includes the total number of homeless individuals in the county along with a breakdown of various subgroups of homeless individuals within that total number. The mental health dataset provides statistics on the number of mental health providers in the county, along with the ratio of residents to mental health providers.</p>
+<p>I’m interested in these two datasets because homeless populations have high needs for mental health care, and this is a cause I’ve learned a lot about in my past two years here in Austin. I’ve learned a lot about the stigma around mental health care and the barriers to accessibility for homeless populations. Certain subgroups especially, such as homeless veterans or homeless youth, are at even higher risk for mental health issues, so the prevelance of mental health providers is vital to give them proper care. Austin specifically has some of the lowest numbers of youth mental health providers, meaning it’s incredibly difficult for street-dependent youth to access affordable and reliable mental health care. Mental health care is already often inaccessible to the general public, so it is even more inaccessible to homeless populations. Although this data does not contain certain details such as the cost of mental health providers in an area or insurance policies of providers, looking at just the sheer number of providers is useful in understanding how accessible mental health care would be to homeless populations in different counties. I am interested to see whether there are more mental health providers in areas with more homelessness, or whether mental healh providers are concentrated in wealthier areas that would have less homeless individuals.</p>
+<p><em>Importing the datasets</em></p>
+<pre class="r"><code>r = getOption(&quot;repos&quot;)
+r[&quot;CRAN&quot;] = &quot;http://cran.us.r-project.org&quot;
+options(repos = r)
+install.packages(&quot;readr&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/7b/4zh7n0hj4fb6k0zlvdf69v0r0000gn/T//Rtmprhfz8n/downloaded_packages</code></pre>
+<pre class="r"><code>library(readr)
+install.packages(&quot;dplyr&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/7b/4zh7n0hj4fb6k0zlvdf69v0r0000gn/T//Rtmprhfz8n/downloaded_packages</code></pre>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>install.packages(&quot;tidyr&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/7b/4zh7n0hj4fb6k0zlvdf69v0r0000gn/T//Rtmprhfz8n/downloaded_packages</code></pre>
+<pre class="r"><code>library(tidyr)
+install.packages(&quot;tidyverse&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/7b/4zh7n0hj4fb6k0zlvdf69v0r0000gn/T//Rtmprhfz8n/downloaded_packages</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.2.1     ✓ stringr 1.4.0
+## ✓ tibble  2.1.3     ✓ forcats 0.4.0
+## ✓ purrr   0.3.3</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>install.packages(&quot;ggplot2&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/7b/4zh7n0hj4fb6k0zlvdf69v0r0000gn/T//Rtmprhfz8n/downloaded_packages</code></pre>
+<pre class="r"><code>library(ggplot2)
+install.packages(&quot;cluster&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/7b/4zh7n0hj4fb6k0zlvdf69v0r0000gn/T//Rtmprhfz8n/downloaded_packages</code></pre>
+<pre class="r"><code>library(cluster)
+
+homelessness &lt;- read_csv(&quot;~/Downloads/homelessness.csv&quot;, 
+    col_types = cols(`Chronically Homeless` = col_number(), 
+        `Homeless Unaccompanied Youth (Under 25)` = col_number(), 
+        `Homeless Veterans` = col_number(), 
+        `Sheltered Homeless` = col_number(), 
+        `Total Homeless` = col_number(), 
+        `Unsheltered Homeless` = col_number()))
+homeless &lt;- homelessness
+
+mental_health_data &lt;- read_csv(&quot;~/Downloads/mental health data.csv&quot;, 
+    col_types = cols(`# Mental Health Providers` = col_number(), 
+        `MHP Ratio` = col_number(), X5 = col_skip()))</code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X5&#39; [5]</code></pre>
+<pre class="r"><code>mhp &lt;- mental_health_data</code></pre>
+<p><em>Renaming Variables</em></p>
+<pre class="r"><code>homeless &lt;- homeless %&gt;% rename(&quot;total_homeless&quot;=&quot;Total Homeless&quot;) %&gt;% 
+  rename(&quot;chronically&quot;=&quot;Chronically Homeless&quot;) %&gt;% rename(&quot;unsheltered&quot;=&quot;Unsheltered Homeless&quot;) %&gt;%
+  rename(&quot;sheltered&quot;=&quot;Sheltered Homeless&quot;) %&gt;% rename(&quot;veterans&quot;=&quot;Homeless Veterans&quot;) %&gt;%
+  rename(&quot;youth_under25&quot;=&quot;Homeless Unaccompanied Youth (Under 25)&quot;)
+
+mhp &lt;- mhp %&gt;% rename(&quot;number_mhp&quot;=&quot;# Mental Health Providers&quot;) %&gt;% rename(&quot;ratio_mhp&quot;=&quot;MHP Ratio&quot;)</code></pre>
+<p><em>Untidying and Re-Tidying Datasets</em></p>
+<pre class="r"><code>#To untidy the homeless dataset, I turned the State column into rows and put the county name as the value for each row. To retidy them, I turned the California and New York columns back into one State column, and I paired them back with the counties in those states.
+homeless_untidy &lt;- homeless %&gt;% pivot_wider(names_from = &quot;State&quot;, values_from = &quot;County&quot;)
+homeless_tidy &lt;- homeless_untidy %&gt;% 
+  pivot_longer(7:8, names_to=&quot;State&quot;,values_to = &quot;County&quot;) %&gt;% na.omit()
+homeless &lt;- homeless_tidy[c(7,8,1,2,3,4,5,6)]
+
+#To untidy the mental health providers dataset, I turned each County into its own column that contains the number of MHP for that county. To retidy them, I took all of the county name columns and put them back into one column and matched the counties back with the number of mental health providers. I also re-ordered the columns so State and County would be the first two columns.
+mhp_untidy &lt;- mhp %&gt;% pivot_wider(names_from = &quot;County&quot;, values_from = &quot;number_mhp&quot;)
+mhp_tidy &lt;- mhp_untidy %&gt;% 
+  pivot_longer(3:55, names_to = &quot;County&quot;, values_to = &quot;number_mhp&quot;) %&gt;% na.omit()
+mhp &lt;- mhp_tidy[c(1,3,4,2)]</code></pre>
+<p><em>Joining the Datasets</em></p>
+<p>I chose to use the inner join function because there are a few counties present in the homeless dataset that aren’t in the mhp dataset, and I only want to view the counties that are present in both datasets. There were 3 rows (counties) that are in homeless and not in mhp, so 3 rows were dropped.</p>
+<pre class="r"><code>mhp_homeless &lt;- inner_join(homeless,mhp)</code></pre>
+<pre><code>## Joining, by = c(&quot;State&quot;, &quot;County&quot;)</code></pre>
+<pre class="r"><code>nrow(homeless) - nrow(mhp)</code></pre>
+<pre><code>## [1] 3</code></pre>
+<p><em>Summary Statistics</em></p>
+<pre class="r"><code>#summary statistics (min, 1st quartile, median, mean, 3rd quartile, and max) for each numeric variable
+mhp_homeless %&gt;% summary() </code></pre>
+<pre><code>##     State              County          total_homeless     chronically     
+##  Length:54          Length:54          Min.   :   29.0   Min.   :    0.0  
+##  Class :character   Class :character   1st Qu.:  272.2   1st Qu.:   36.5  
+##  Mode  :character   Mode  :character   Median :  682.0   Median :  102.5  
+##                                        Mean   : 3378.2   Mean   :  588.1  
+##                                        3rd Qu.: 1659.8   3rd Qu.:  341.5  
+##                                        Max.   :75323.0   Max.   :14173.0  
+##   unsheltered        sheltered           veterans      youth_under25    
+##  Min.   :    0.0   Min.   :    3.00   Min.   :   0.0   Min.   :   0.00  
+##  1st Qu.:   25.5   1st Qu.:   86.25   1st Qu.:  10.0   1st Qu.:  20.25  
+##  Median :  146.5   Median :  183.50   Median :  47.0   Median :  47.00  
+##  Mean   : 1133.9   Mean   :  962.52   Mean   : 211.3   Mean   : 197.13  
+##  3rd Qu.:  825.0   3rd Qu.:  509.00   3rd Qu.: 144.8   3rd Qu.: 117.50  
+##  Max.   :28948.0   Max.   :26429.00   Max.   :4016.0   Max.   :2670.00  
+##    number_mhp        ratio_mhp    
+##  Min.   :   27.0   Min.   :120.0  
+##  1st Qu.:  209.5   1st Qu.:290.0  
+##  Median :  715.0   Median :400.0  
+##  Mean   : 2367.1   Mean   :429.1  
+##  3rd Qu.: 2110.5   3rd Qu.:530.0  
+##  Max.   :31986.0   Max.   :960.0</code></pre>
+<pre class="r"><code>#mean and standard deviation of total number of homeless individuals grouped by state
+mhp_homeless %&gt;% group_by(State) %&gt;% summarize(mean=mean(total_homeless),sd=sd(total_homeless))</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   State       mean     sd
+##   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;
+## 1 California 3252.  7593.
+## 2 New York   3525. 14979.</code></pre>
+<pre class="r"><code>#mean and standard deviation of total number of mental health providers grouped by state
+mhp_homeless %&gt;% group_by(State) %&gt;% summarize(mean=mean(number_mhp),sd=sd(number_mhp))</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   State       mean    sd
+##   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;
+## 1 California 3393. 6128.
+## 2 New York   1177. 2686.</code></pre>
+<pre class="r"><code>#new variable of mental health providers to homeless individuals ratio
+mhp_homeless %&gt;% mutate(mhp_homeless_ratio=number_mhp/total_homeless) %&gt;% 
+  select(State,County,total_homeless,number_mhp,mhp_homeless_ratio) %&gt;%
+  arrange(desc(mhp_homeless_ratio))</code></pre>
+<pre><code>## # A tibble: 54 x 5
+##    State      County     total_homeless number_mhp mhp_homeless_ratio
+##    &lt;chr&gt;      &lt;chr&gt;               &lt;dbl&gt;      &lt;dbl&gt;              &lt;dbl&gt;
+##  1 California Santa Cruz            138       1938              14.0 
+##  2 New York   Rockland              117        822               7.03
+##  3 New York   Chautauqua             29        192               6.62
+##  4 New York   Tompkins               88        355               4.03
+##  5 New York   Monroe                762       1868               2.45
+##  6 California Napa                  293        702               2.40
+##  7 New York   Jefferson              86        206               2.40
+##  8 California El Dorado             269        588               2.19
+##  9 New York   Cattaragus             41         86               2.10
+## 10 New York   Dutchess              375        783               2.09
+## # … with 44 more rows</code></pre>
+<pre class="r"><code>#counties that have more mental health providers than homeless individuals
+mhp_homeless %&gt;% mutate(mhp_homeless_ratio=number_mhp/total_homeless) %&gt;% select(State,County,total_homeless,number_mhp,mhp_homeless_ratio) %&gt;% filter(mhp_homeless_ratio&gt;=1.0)</code></pre>
+<pre><code>## # A tibble: 33 x 5
+##    State      County         total_homeless number_mhp mhp_homeless_ratio
+##    &lt;chr&gt;      &lt;chr&gt;                   &lt;dbl&gt;      &lt;dbl&gt;              &lt;dbl&gt;
+##  1 California San Mateo                1483       2705               1.82
+##  2 California Yolo                      498        728               1.46
+##  3 California El Dorado                 269        588               2.19
+##  4 California Fresno                   1722       3075               1.79
+##  5 California Marin                    1318       1895               1.44
+##  6 California Napa                      293        702               2.40
+##  7 California Riverside                2372       4540               1.91
+##  8 California San Bernardino           2149       4487               2.09
+##  9 California San Diego                8742      11268               1.29
+## 10 California San Francisco            6556       7656               1.17
+## # … with 23 more rows</code></pre>
+<pre class="r"><code>#the proportion of the total homeless population made up by veterans and youth under 25
+mhp_homeless %&gt;% select(State,County,total_homeless,veterans,youth_under25) %&gt;%
+ mutate(vet_youth_number=veterans+youth_under25) %&gt;% mutate(vet_youth_number/total_homeless)</code></pre>
+<pre><code>## # A tibble: 54 x 7
+##    State County total_homeless veterans youth_under25 vet_youth_number
+##    &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Cali… Amador            430       47            35               82
+##  2 Cali… Colusa            136       10             4               14
+##  3 Cali… San M…           1483      183            44              227
+##  4 Cali… Yolo              498       44            45               89
+##  5 Cali… El Do…            269       20            17               37
+##  6 Cali… Fresno           1722      227           136              363
+##  7 Cali… Humbo…           1180      145           116              261
+##  8 Cali… Imper…            554        8            21               29
+##  9 Cali… Lake              315       21             6               27
+## 10 Cali… Los A…          41174     4016          2670             6686
+## # … with 44 more rows, and 1 more variable:
+## #   `vet_youth_number/total_homeless` &lt;dbl&gt;</code></pre>
+<pre class="r"><code>#which counties have the highest proportion of veteran and youth homelessness 
+mhp_homeless %&gt;% select(State,County,total_homeless,veterans,youth_under25) %&gt;%
+ mutate(vet_youth_number=veterans+youth_under25) %&gt;% mutate(prop=vet_youth_number/total_homeless) %&gt;% arrange(desc(prop))</code></pre>
+<pre><code>## # A tibble: 54 x 7
+##    State   County   total_homeless veterans youth_under25 vet_youth_number  prop
+##    &lt;chr&gt;   &lt;chr&gt;             &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt; &lt;dbl&gt;
+##  1 New Yo… Yates               187       35            36               71 0.380
+##  2 Califo… San Lui…           1515      130           394              524 0.346
+##  3 Califo… Marin              1318       66           367              433 0.329
+##  4 Califo… San Fra…           6556      557          1473             2030 0.310
+##  5 Califo… Sonoma             3097      215           678              893 0.288
+##  6 Califo… Yuba                716      113            66              179 0.25 
+##  7 New Yo… Cattara…             41        1             9               10 0.244
+##  8 Califo… San Die…           8742     1381           625             2006 0.229
+##  9 New Yo… Chenango            302        4            65               69 0.228
+## 10 New Yo… Saratoga            282       40            23               63 0.223
+## # … with 44 more rows</code></pre>
+<pre class="r"><code>#which state has the highest average proportion of veteran and youth homelessness
+mhp_homeless %&gt;% select(State,County,total_homeless,veterans,youth_under25) %&gt;%
+ mutate(vet_youth_number=veterans+youth_under25) %&gt;% mutate(prop=vet_youth_number/total_homeless) %&gt;%
+  group_by(State) %&gt;% summarize(mean=mean(prop)) %&gt;% arrange(desc(mean))</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   State       mean
+##   &lt;chr&gt;      &lt;dbl&gt;
+## 1 California 0.176
+## 2 New York   0.160</code></pre>
+<pre class="r"><code>#counties that have less than 100 mental health providers
+mhp_homeless %&gt;% select(State,County,total_homeless,number_mhp,ratio_mhp) %&gt;% filter(number_mhp&lt;100) %&gt;% arrange(desc(number_mhp))</code></pre>
+<pre><code>## # A tibble: 6 x 5
+##   State      County     total_homeless number_mhp ratio_mhp
+##   &lt;chr&gt;      &lt;chr&gt;               &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+## 1 New York   Chenango              302         92       520
+## 2 New York   Allegany              648         90       520
+## 3 New York   Cattaragus             41         86       900
+## 4 California Amador                430         77       500
+## 5 California Colusa                136         37       590
+## 6 New York   Yates                 187         27       920</code></pre>
+<pre class="r"><code>#correlation between total homelessness and number of mental health providers
+mhp_homeless %&gt;% summarize(cor(total_homeless,number_mhp))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `cor(total_homeless, number_mhp)`
+##                               &lt;dbl&gt;
+## 1                             0.723</code></pre>
+<pre class="r"><code>#correlation between all numeric variables
+mhp_homeless %&gt;% select_if(is.numeric) %&gt;% cor</code></pre>
+<pre><code>##                total_homeless chronically unsheltered  sheltered   veterans
+## total_homeless      1.0000000   0.7637587   0.5505288  0.9735054  0.7357261
+## chronically         0.7637587   1.0000000   0.9560023  0.6018215  0.9752757
+## unsheltered         0.5505288   0.9560023   1.0000000  0.3519618  0.9492254
+## sheltered           0.9735054   0.6018215   0.3519618  1.0000000  0.5755635
+## veterans            0.7357261   0.9752757   0.9492254  0.5755635  1.0000000
+## youth_under25       0.7945113   0.9121220   0.8510621  0.6718141  0.9041325
+## number_mhp          0.7231263   0.9429619   0.9226997  0.5647988  0.9773998
+## ratio_mhp          -0.2626751  -0.1999852  -0.1725325 -0.2433035 -0.2191839
+##                youth_under25 number_mhp  ratio_mhp
+## total_homeless     0.7945113  0.7231263 -0.2626751
+## chronically        0.9121220  0.9429619 -0.1999852
+## unsheltered        0.8510621  0.9226997 -0.1725325
+## sheltered          0.6718141  0.5647988 -0.2433035
+## veterans           0.9041325  0.9773998 -0.2191839
+## youth_under25      1.0000000  0.9024295 -0.3318006
+## number_mhp         0.9024295  1.0000000 -0.2955032
+## ratio_mhp         -0.3318006 -0.2955032  1.0000000</code></pre>
+<p>Some key takeaways from exploring the dataset: Because the summary statistics are summarizing hard numbers as opposed to ratios/proportions, they aren’t very telling in certain cases. For example, a minimum of 29 total homeless individuals versus a maximum of 75,323 doesn’t give me much information alone- if I had data on the total populations of these counties, the values would be more helpful. When grouped by state, we can see that the mean number of homeless people per county is very similar between the two states, but California has over 2,000 more mental health providers on average. When looking at the mental health provider to homeless individual ratio, the smaller number means the larger the gap between number of mental health providers and number of homeless individuals. There are 33 counties that have more mental health providers than homeless individuals, which could reflect the socioeconomic status or homelessness laws of the counties. For example, these may be wealthier counties/suburbs that have stricter homelessness laws, causing there to be a concentration of mental health providers and very few homeless individuals. California has a slightly higher proportion than New York of youth and veteran homeless individuals. There are only six counties that have less than 100 mental health providers, which could reflect size or socioeconomic status, and the majority of those counties are in New York. These counties also have relatively high ratios of mental health providers to individuals, indicating that there is a gap in mental health care in these counties. Finally, the correlation between total number of homeless individuals and total number of mental health providers in a county is about 0.723, which is somewhat strong. The correlation values between number of mental health providers and veterans in a county is the highest.</p>
+<p><em>Visualizing the Data</em></p>
+<pre class="r"><code>#Dataset that only contains the top 10 counties with highest total homeless individuals
+mhp_homeless_top &lt;- mhp_homeless %&gt;% top_n(10,total_homeless) %&gt;% arrange(desc(total_homeless))
+
+#Barplot to visualize that data of total number of homeless individuals in the top 10 counties, colored by state 
+mhp_homeless_top %&gt;% ggplot() +
+  geom_bar(aes(x=County,y=total_homeless, fill=State),stat=&quot;summary&quot;,fun.y=&quot;mean&quot;) +
+  theme(axis.text.x=element_text(angle=45,hjust=1)) + ylab(&quot;Number Homeless Individuals&quot;) +
+  ggtitle(&quot;Top 10 Counties with Highest Number of Homeless Individuals&quot;)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>#Point graph to map the total number of mental health providers versus the total number of homeless individuals colored by state with a line of best fit for each state
+mhp_homeless %&gt;% ggplot(aes(x=number_mhp,y=total_homeless,color=State)) + geom_point(aes(x=number_mhp,y=total_homeless,color=State)) + scale_x_continuous(lim=c(0,8000)) + scale_y_continuous(lim=c(0,7500)) + 
+  geom_smooth(method = &#39;lm&#39;, se=FALSE) + xlab(&quot;Number of Mental Health Providers&quot;) +
+  ylab(&quot;Number of Homeless Individuals&quot;) + ggtitle(&quot;Number of Mental Health Providers vs Number of Homeless Individuals&quot;)</code></pre>
+<pre><code>## Warning: Removed 3 rows containing non-finite values (stat_smooth).</code></pre>
+<pre><code>## Warning: Removed 3 rows containing missing values (geom_point).</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<p>The first graph shows that 80% of the counties with the highest number of homeless individuals are in California, although the county with the highest number (which is significantly higher than the other counties) is in New York. The second plot visualized the correlation between number of mental health providers and number of homeless individuals, separated by state. The correlation in California is slightly higher than that of New York, which makes sense with the previous data that showed the average number of mental health providers is about 2,000 people higher in California than in New York. I changed the scale to focus on the area that most counties are concentrated, and this cut out a few outliers including LA county and New York County. Additionally, for the New York correlation line, it seems like more New York counties appear below the line so they would likely have a lower correlation if the significantly larger counties were removed.</p>
+<p><em>Clustering and PCA</em></p>
+<pre class="r"><code>pam1&lt;-mhp_homeless%&gt;%pam(k=3)</code></pre>
+<pre><code>## Warning in data.matrix(x): NAs introduced by coercion
+
+## Warning in data.matrix(x): NAs introduced by coercion</code></pre>
+<pre class="r"><code>pam1</code></pre>
+<pre><code>## Medoids:
+##      ID State County total_homeless chronically unsheltered sheltered veterans
+## [1,]  4    NA     NA            498          87         193       179       44
+## [2,] 10    NA     NA          41174       14173       28948      7619     4016
+## [3,] 43    NA     NA          75323        5830        3183     26429     1558
+##      youth_under25 number_mhp ratio_mhp
+## [1,]            45        728       300
+## [2,]          2670      31986       320
+## [3,]          1706      13130       130
+## Clustering vector:
+##  [1] 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## [39] 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1
+## Objective function:
+##    build     swap 
+## 2070.587 2070.587 
+## 
+## Available components:
+##  [1] &quot;medoids&quot;    &quot;id.med&quot;     &quot;clustering&quot; &quot;objective&quot;  &quot;isolation&quot; 
+##  [6] &quot;clusinfo&quot;   &quot;silinfo&quot;    &quot;diss&quot;       &quot;call&quot;       &quot;data&quot;</code></pre>
+<pre class="r"><code>pamclust&lt;-mhp_homeless %&gt;% mutate(cluster=as.factor(pam1$clustering))
+
+pamclust%&gt;%group_by(cluster)%&gt;%summarize_if(is.numeric,mean,na.rm=T)</code></pre>
+<pre><code>## # A tibble: 3 x 9
+##   cluster total_homeless chronically unsheltered sheltered veterans
+##   &lt;fct&gt;            &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 1                1268.        226.        560.      345.     112.
+## 2 2               41174       14173       28948      7619     4016 
+## 3 3               75323        5830        3183     26429     1558 
+## # … with 3 more variables: youth_under25 &lt;dbl&gt;, number_mhp &lt;dbl&gt;,
+## #   ratio_mhp &lt;dbl&gt;</code></pre>
+<pre class="r"><code>pamclust %&gt;% ggplot(aes(total_homeless,ratio_mhp,color=cluster))+geom_point()</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>As shown by the cluster summaries, cluster 1 has the lowest homelessness numbers and lowest number of mental health providers. Cluster 2 is in the middle for total homelessness, and cluster 3 is the highest. Cluster 2, however, has a higher average number of mental health providers and cluster 3 has the lowest ratio of mental health providers to individuals despite having the highest number of homeless individuals.</p>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

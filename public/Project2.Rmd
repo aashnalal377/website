@@ -1,0 +1,234 @@
+---
+title: "EDA Project 2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(ggplot2)
+library(glmnet)
+ r = getOption("repos")
+r["CRAN"] = "http://cran.us.r-project.org" 
+options(repos = r) 
+install.packages("readr")
+```
+
+**EDA Project 2: 2016 Election Results by State**
+
+The dataset I chose explores the 2016 presidential election results by state, comparing various factors across each state. The binary variable, TrumpWin, expresses 1 if President Trump won in that state is 0 if he did not. State and Abr specify which state we are looking at and Income shows the per capita income in the state. HS, BA, and Adv shows the percent of high school grads, college grads, and advanced degrees respectively. The last variable, Dem.Rep, shows Democratic lean minus Republican lean in the state, so a negative number indicates that it is a more Republican leaning state and a positive number indicates the opposite.
+
+```{R}
+Election16 <- read_csv("~/Downloads/Election16.csv")
+Election16 <- Election16 %>% select(-X1)
+```
+
+
+*MANOVA testing*
+
+The null hypothesis states that for each response variable, the means of TrumpWin across the states are equal. The alternate hypothesis states that for at least one response variable, at least one of the means differs.
+
+```{R}
+#Manova
+man<-manova(cbind(Income,HS,BA,Adv)~TrumpWin, data=Election16)
+summary(man)
+
+#Univariate ANOVA
+summary.aov(man)
+
+#post-hoc t-tests
+pairwise.t.test(Election16$Income,Election16$TrumpWin,p.adj="bonferroni")
+pairwise.t.test(Election16$BA,Election16$TrumpWin,p.adj="bonferroni")
+pairwise.t.test(Election16$Adv,Election16$TrumpWin,p.adj="bonferroni")
+
+0.05/5
+```
+Briefly discuss assumptions and whether or not they are likely to have been met (2).
+
+5 tests were performed: 1 MANOVA, 1 univariate ANOVA, and 3 t-tests. The t-tests were adjusted using the Bonferroni method (the new p-value would be 0.01 given that 5 tests were performed). The results of the MANOVA show that there is a significant difference, and the results of the univariate ANOVA shows that the Income, percent college grads, and percent of advanced degrees variables significantly differ. The results of the post-hoc t-tests indicate that across each of these variables, there is a significant difference in whether or not  Trump won in that state. The random sample and independent observations assumptions are not super applicable to this because the data on income and education levels probably came from state information on residents. Equal variance and linear relationships was likely not met in terms of Income.
+
+*Randomization Test*
+
+This randomization test is testing whether income differs in states where Trump won and did not win. The null hypothesis is that there is no difference in income in states where Trump won versus states where he did not. The alternate hypothesis is that there is a difference in income in states where Trump won versus states where he did not. This test will test the mean difference, and then randomize income and re-test the mean difference.
+
+```{R}
+Election16%>%group_by(TrumpWin)%>%summarize(m=mean(Income))%>%summarize(diff(m))
+
+rand<-vector()
+for(i in 1:5000){
+new<-data.frame(Income=sample(Election16$Income),TrumpWin=Election16$TrumpWin)
+rand[i]<-mean(new[new$TrumpWin=="1",]$Income)-
+  mean(new[new$TrumpWin=="0",]$Income)
+}
+
+mean(rand< -11031.23)*2 
+
+{hist(rand,main="",ylab=""); abline(v = -13.7,col="red")}
+
+```
+The original mean difference between income is 11031.23, which is a high value. The p-value of 0 shows that there is no probability of observing a mean difference as extreme as this one. 
+
+*Linear Regression*
+
+```{R}
+#linear regression model predicting Income from percent of high school grads and college grads
+Election16$Income_c <- Election16$Income - mean(Election16$Income)
+Election16$HS_c <- Election16$HS - mean(Election16$HS)
+Election16$BA_c <- Election16$BA - mean(Election16$BA)
+fit<-lm(Income_c~HS_c*BA_c,data=Election16)
+summary(fit)
+
+#plot of the regression
+Election16 %>% ggplot(aes(x=HS_c+BA_c,y=Income_c)) + geom_point() + geom_smooth(method='lm',se=F)
+
+#testing assumptions
+resid<-fit$residuals
+fittedvals<-fit$fitted.values
+ggplot()+geom_point(aes(fittedvals,resid))+geom_hline(yintercept=0, color='red')
+ks.test(resid, "pnorm", mean=0, sd(resid)) 
+
+#regression with robust standard errors
+install.packages("lmtest")
+install.packages("sandwich")
+library(sandwich)
+library(lmtest)
+coeftest(fit, vcov = vcovHC(fit))
+
+#R^2 value (proportion of variation)
+summary(fit)$r.sq
+
+```
+When testing the effect of the percent of high school grads and percent of college grads on the per capita income of the state, both high school and college grad percentages had a positive increase on income. Per one percent increase of high school grads while controlling for college grads, income increases by 334.44 dollars and per one percent increase of college grads while controlling for high school grads, income increases by 1,342.32 dollars. The plot shows that the data looks linear and homoskedastic, and the ks.test shows that the distribution is normal. For the test with robust standard error and the test without, only percent of college grads (BA_c) had a significant effect on Income, so there was no change between the two tests. The model explains 67.5% of variation in income. 
+
+*Bootrstrapped Standard Errors*
+
+Rerun same regression model (with interaction), but this time compute bootstrapped standard errors. Discuss any changes you observe in SEs and p-values using these SEs compared to the original SEs and the robust SEs)
+```{R}
+fit<-lm(Income_c~HS_c*BA_c,data=Election16)
+resid<-fit$residuals
+fittedvals<-fit$fitted.values
+
+ resid_resamp<-replicate(5000,{
+ new_resid<-sample(resid,replace=TRUE) 
+ Election16$new_Income<-fittedvals+new_resid 
+ fit<-lm(new_Income~HS_c*BA_c,data=Election16) 
+ coef(fit) 
+})
+ 
+resid_resamp%>%t%>%as.data.frame%>%summarize_all(sd)
+```
+The bootstrapped standard errors were all lower than the original model's standard errors, except for the interaction. This was the same when comparing the bootstrapped standard errors with the robust standard errors.
+
+*Logistic Regression*
+
+This logistic regression is testing the effect of Income and percent of college grads on whether Trump won or did not win in that state. 
+```{R}
+#logistic regression
+log_fit<-glm(TrumpWin~Income+BA,data=Election16)
+coeftest(log_fit)
+exp(coeftest(log_fit))
+
+#confusion matrix
+prob<-predict(log_fit,type="response")
+table(predict=as.numeric(prob>0.5),truth=Election16$TrumpWin)%>%addmargins
+
+#Accuracy
+(16+28)/50
+
+#Sensitivity (TPR)
+28/30
+
+#Specificity (TPR)
+16/20
+
+#Precision (PPV)
+28/32
+
+#plot of density of log-odds by TrumpWin variable
+odds<-function(prob)prob/(1-prob)
+logit<-function(prob)log(odds(prob))
+ggplot()+stat_function(aes(x=seq(0.01,0.99,0.01)),fun=logit,geom="line")
+
+#ROC Curve and AUC
+library(plotROC) 
+ROCcurve<-ggplot(Election16)+geom_roc(aes(d=TrumpWin,m=prob), n.cuts=0) 
+ROCcurve
+calc_auc(ROCcurve)
+
+#10 fold CV
+fit_cv<-glm(TrumpWin~Income+BA,data=Election16,family="binomial")
+prob_cv<-predict(fit_cv,type="response")
+
+class_diag<-function(probs,truth){
+ tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+ acc=sum(diag(tab))/sum(tab)
+ sens=tab[2,2]/colSums(tab)[2]
+ spec=tab[1,1]/colSums(tab)[1]
+ ppv=tab[2,2]/rowSums(tab)[2]
+ if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+
+ ord<-order(probs, decreasing=TRUE)
+ probs <- probs[ord]; truth <- truth[ord]
+ TPR=cumsum(truth)/max(1,sum(truth))
+ FPR=cumsum(!truth)/max(1,sum(!truth))
+ dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+ TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+ n <- length(TPR)
+ auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+ data.frame(acc,sens,spec,ppv,auc)
+} 
+
+set.seed(1234)
+k=5
+data<-Election16[sample(nrow(Election16)),]
+folds<-cut(seq(1:nrow(Election16)),breaks=k,labels=F) 
+diags<-NULL
+for(i in 1:k){
+ train<-data[folds!=i,]
+ test<-data[folds==i,]
+ truth<-test$TrumpWin
+ fit_cv<-glm(TrumpWin~Income+BA,data=train,family="binomial")
+ probs<-predict(fit_cv,newdata=test,type="response")
+ 
+ diags<-rbind(diags,class_diag(probs,truth))
+}
+apply(diags,2,mean)
+
+```
+Only the effect of percent of college grads is significant on whether or not Trump won. A unit increase in Income multiplies the odds of Trump winning by 0.99999, and a unit increase in the percentage of college grads multiplies the odds of Trump winning by 0.94092. The accuracy of the model is 0.88, the sensitivity is 0.933, the specificity is 0.8, and the precision is 0.875. The fact that the sensitivity is high means that the model is good at predicting that Trump won in states that he did win in, but the lower specificity indicates that the model was not as strong at predicting his losses (the model predicted more states to win than he actually did win). The precision of 0.875 indicates that the model classified 87.5% of the states that voted for Trump as states that voted for Trump. The high AUC of about 0.912 and ROC curve indicate that the model is a strong predictor of whether Trump won or did not win in a state. With the 10-fold CV, the accuracy was 0.86, the sensitivity was 0.871, and the specificity was 0.82.
+
+*LASSO Regression*
+
+```{R}
+y<-as.matrix(Election16$TrumpWin)
+x<-Election16 %>% select(-TrumpWin,-State,-Abr) %>% mutate_all(scale) %>% as.matrix
+
+cv<-cv.glmnet(x,y)
+lasso<-glmnet(x,y,lambda=cv$lambda.1se)
+coef(lasso)
+
+set.seed(1234)
+k=5 
+data1<-Election16[sample(nrow(Election16)),] #randomly order rows
+folds<-cut(seq(1:nrow(Election16)),breaks=k,labels=F) #create folds
+diags<-NULL
+for(i in 1:k){
+
+ train<-data1[folds!=i,]
+ test<-data1[folds==i,]
+ truth<-test$TrumpWin
+ 
+ fit<-glm(TrumpWin~BA+Income+Adv+Dem.Rep,data=train,family="binomial")
+ probs<-predict(fit,newdata = test,type="response")
+ 
+ diags<-rbind(diags,class_diag(probs,truth))
+}
+diags%>%summarize_all(mean)
+
+```
+The output of the LASSO regression indicates that Income, percent of college grads, percent of advanced degrees, and democratic or republican lean are the most important predictors of Trump winning in a state. With the LASSO regression 10-fold CV, the accuracy (along with all of the other measures) was higher than that of the logistic regression. 
+
+
+

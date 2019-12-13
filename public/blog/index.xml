@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blogs on Aashna Lal</title>
+    <link>/blog/</link>
+    <description>Recent content in Blogs on Aashna Lal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 11 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Matching Strategies in Python</title>
+      <link>/blog/matching-strategies-in-python/</link>
+      <pubDate>Wed, 11 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/matching-strategies-in-python/</guid>
+      <description>Matching and Filtering Strings
+RegEx (Regular Expression) can be used to search for patterns within a string. This is useful in a variety of contexts, such as matching IP addresses, websites, and nucleotide bases as just a few examples.
+In the following string (from Homework 11), I am going to match all of the website addresses.
+import re string6=&amp;quot;&amp;lt;http://www.classmates.com/go/e/200988231/CC123101BT/CM00&amp;gt; &amp;lt;http://graphics.classmates.com/graphics/spacer.gif&amp;gt; &amp;lt;http://graphics.classmates.com/graphics/sp \ You have received this email because the requester specified you as their Manager.</description>
+    </item>
+    
+  </channel>
+</rss>
